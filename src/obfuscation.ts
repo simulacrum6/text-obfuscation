@@ -1,4 +1,4 @@
-function obfuscateChar(c) {
+function obfuscateChar(c: string) {
     const maxDiacritics = 4
     const udMin = 0x0300 // diacritics range start 
     const udMax = 0x036F // diacritics range end
@@ -18,23 +18,35 @@ function getRandomUnicodeChar(min=0x0000, max=0xFFFF) {
     return String.fromCodePoint(codePoint)
 }
 
-function obfuscate(text, prob) {
+function obfuscate(text: string, obfuscationProbability: number) {
     return Array.from(text)
-        .map(c => Math.random() < prob ? obfuscateChar(c) : c)
+        .map(c => Math.random() < obfuscationProbability ? obfuscateChar(c) : c)
         .join('')
 }
 
 function obfuscateInput() {
-    const input = document.getElementById('obfuscation-input')
+    const input = document.getElementById('obfuscation-input') as HTMLInputElement
     const output = document.getElementById('obfuscation-output')
+
+    if (input === null) {
+        throw new Error('No element with id "obfuscation-input" in DOM!')
+    }
+
+    if (output == null) {
+        throw new Error('No element with id "obfuscation-output" in DOM!')
+    }
 
     output.innerHTML = obfuscate(input.value, 0.33)
 }
 
 function obfuscateDescription() {
     const desc = document.getElementById('description')
-    console.log(desc.innerHTML)
+    
+    if (desc === null) {
+        throw new Error('No element with id "description" in DOM!')
+    }
+
     desc.innerHTML = obfuscate(desc.innerHTML, 0.25)
 }
 
-window.onlad = obfuscateDescription()
+window.onload = obfuscateDescription
