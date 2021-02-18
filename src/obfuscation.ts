@@ -1,26 +1,28 @@
-function obfuscateChar(c: string) {
-    const maxDiacritics = 4
-    const udMin = 0x0300 // diacritics range start 
-    const udMax = 0x036F // diacritics range end
-    const nDiacritics = Math.floor(Math.random() * maxDiacritics + 1)
+function randCheck(target: number) {
+    return Math.random() < target
+}
+
+function randInt(min=0, max=100) {
+    return Math.floor(Math.random() * (max + 1 - min)) + min
+}
+
+function obfuscateChar(char: string, minObfuscations = 0, maxObfuscations = 4) {
+    const minCodePoint = 0x0300 // diacritics range start 
+    const maxCodePoint = 0x036F // diacritics range end
+    const numObfuscations = randInt(minObfuscations, maxObfuscations)
     
-    const obfuscated = [c]
-    for (let i = 0; i < nDiacritics; i++) {
-        obfuscated.push(getRandomUnicodeChar(udMin, udMax))
+    const obfuscated = [char]
+    for (let i = 0; i < numObfuscations; i++) {
+        const diacritic = String.fromCodePoint(randInt(minCodePoint, maxCodePoint))
+        obfuscated.push(diacritic)
     }
 
     return obfuscated.join('')
 }
 
-function getRandomUnicodeChar(min=0x0000, max=0xFFFF) {
-    const range = max - min
-    const codePoint = Math.floor(Math.random() * range) + min
-    return String.fromCodePoint(codePoint)
-}
-
 function obfuscate(text: string, obfuscationProbability: number) {
     return Array.from(text)
-        .map(c => Math.random() < obfuscationProbability ? obfuscateChar(c) : c)
+        .map(c => randCheck(obfuscationProbability) ? obfuscateChar(c) : c)
         .join('')
 }
 
