@@ -2,22 +2,20 @@ function randCheck(target: number) {
     return Math.random() < target
 }
 
-function randInt(min=0, max=100) {
+function randInt(min = 0, max = 100) {
     return Math.floor(Math.random() * (max + 1 - min)) + min
 }
 
 function obfuscateChar(char: string, minObfuscations = 0, maxObfuscations = 4) {
     const minCodePoint = 0x0300 // diacritics range start 
     const maxCodePoint = 0x036F // diacritics range end
-    const numObfuscations = randInt(minObfuscations, maxObfuscations)
+    const numDiacritics = randInt(minObfuscations, maxObfuscations)
     
-    const obfuscated = [char]
-    for (let i = 0; i < numObfuscations; i++) {
-        const diacritic = String.fromCodePoint(randInt(minCodePoint, maxCodePoint))
-        obfuscated.push(diacritic)
-    }
+    const dicaricits = Array(numDiacritics).fill(null)
+        .map(_ => randInt(minCodePoint, maxCodePoint))
+        .map(codePoint => String.fromCodePoint(codePoint))
 
-    return obfuscated.join('')
+    return [char].concat(dicaricits).join('')
 }
 
 function obfuscate(text: string, obfuscationProbability: number) {

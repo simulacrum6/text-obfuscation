@@ -8,13 +8,11 @@ function randInt(min = 0, max = 100) {
 function obfuscateChar(char, minObfuscations = 0, maxObfuscations = 4) {
     const minCodePoint = 0x0300; // diacritics range start 
     const maxCodePoint = 0x036F; // diacritics range end
-    const numObfuscations = randInt(minObfuscations, maxObfuscations);
-    const obfuscated = [char];
-    for (let i = 0; i < numObfuscations; i++) {
-        const diacritic = String.fromCodePoint(randInt(minCodePoint, maxCodePoint));
-        obfuscated.push(diacritic);
-    }
-    return obfuscated.join('');
+    const numDiacritics = randInt(minObfuscations, maxObfuscations);
+    const dicaricits = Array(numDiacritics).fill(null)
+        .map(_ => randInt(minCodePoint, maxCodePoint))
+        .map(codePoint => String.fromCodePoint(codePoint));
+    return [char].concat(dicaricits).join('');
 }
 function obfuscate(text, obfuscationProbability) {
     return Array.from(text)
