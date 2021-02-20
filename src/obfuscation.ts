@@ -6,22 +6,75 @@ function randInt(min = 0, max = 100) {
     return Math.floor(Math.random() * (max + 1 - min)) + min
 }
 
-function obfuscateChar(char: string, minObfuscations = 0, maxObfuscations = 4) {
-    const minCodePoint = 0x0300 // diacritics range start 
-    const maxCodePoint = 0x036F // diacritics range end
-    const numDiacritics = randInt(minObfuscations, maxObfuscations)
-    
-    const dicaricits = Array(numDiacritics).fill(null)
-        .map(_ => randInt(minCodePoint, maxCodePoint))
-        .map(codePoint => String.fromCodePoint(codePoint))
-
-    return [char].concat(dicaricits).join('')
+function zip<T, S>(a: T[], b: S[]) {
+    const n = Math.max(a.length, b.length)
+    const c = Array(n) as [[T, S]]
+    for (let i = 0; i < n; i++) {
+        c[i] = [a[i % a.length], b[i % b.length]]
+    }
+    return c
 }
 
-function obfuscate(text: string, obfuscationProbability: number) {
-    return Array.from(text)
-        .map(c => randCheck(obfuscationProbability) ? obfuscateChar(c) : c)
-        .join('')
+abstract class Obfuscator {
+    obfuscationProbability: number = 1.0;
+
+    obfuscate(text: string, probs?:number[]) {
+        const chars = Array.from(text)
+
+        if (!probs) {
+            probs = Array(chars.length).fill(this.obfuscationProbability)
+        }
+        if (probs.length === 1) {
+            probs = Array(chars.length).fill(probs[0])
+        }
+        if (probs.length !== chars.length) {
+            throw new Error('Passed probability array must contain either exactly 1 element or 1 element per character in the given text!')
+        }
+
+        return zip(chars, probs).map(([c, p]) => randCheck(p) ? this.obfuscateChar(c) : c).join('')
+    }
+
+    abstract obfuscateChar(char: string): string
+}
+
+class CodePointInsertionObfuscator extends Obfuscator {
+    static MIN_INSERTIONS = 0
+    static MAX_INSERTIONS = 0
+    static OBFUSCATION_PROBABILITY = 0.25 
+
+    static CombiningDiacriticalMarks(minInsertions?: number, maxInsertions?: number, obfuscationProbability?: number) {
+        const cpg = CodePointGenerator.CombiningDiacriticalMarks()
+        return new CodePointInsertionObfuscator(cpg, minInsertions, maxInsertions, obfuscationProbability)
+    }
+
+    constructor(public cpg: CodePointGenerator, public minInsertions = 0, public maxInsertions = 3, public obfuscationProbability = 0.25) {
+        super()
+    }
+
+    obfuscateChar(char: string): string {
+        const numInsertions = randInt(this.minInsertions, this.maxInsertions)
+        return char + this.cpg.generateString(numInsertions)
+    }
+}
+
+class CodePointGenerator {
+    static CombiningDiacriticalMarks() {
+        return new CodePointGenerator(0x0300, 0x036F)
+    }
+
+    constructor(public minCodePoint: number, public maxCodePoint: number) { }
+
+    generateCodePoint() {
+        return randInt(this.minCodePoint, this.maxCodePoint)
+    }
+
+    generateChar() {
+        return String.fromCodePoint(this.generateCodePoint())
+    }
+
+    generateString(length: number) {
+        return Array(length).fill(null).map(_ => this.generateChar()).join('')
+    }
 }
 
 function obfuscateInput() {
@@ -36,7 +89,7 @@ function obfuscateInput() {
         throw new Error('No element with id "obfuscation-output" in DOM!')
     }
 
-    output.innerHTML = obfuscate(input.value, 0.33)
+    output.innerHTML = ofc.obfuscate(input.value)
 }
 
 function obfuscateDescription() {
@@ -46,7 +99,8 @@ function obfuscateDescription() {
         throw new Error('No element with id "description" in DOM!')
     }
 
-    desc.innerHTML = obfuscate(desc.innerHTML, 0.25)
+    desc.innerHTML = ofc.obfuscate(desc.innerHTML)
 }
 
+const ofc = CodePointInsertionObfuscator.CombiningDiacriticalMarks()
 window.onload = obfuscateDescription
