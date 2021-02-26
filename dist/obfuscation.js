@@ -147,11 +147,13 @@ function obfuscateInput() {
     output.innerHTML = ofc.obfuscate(input.value);
 }
 function obfuscateDescription() {
-    const desc = document.getElementById('description');
-    if (desc === null) {
+    const paragraphs = document.querySelectorAll('.description p');
+    if (!paragraphs.length) {
         throw new Error('No element with id "description" in DOM!');
     }
-    desc.innerHTML = ofc.obfuscate(desc.innerHTML);
+    for (let paragraph of paragraphs) {
+        paragraph.innerHTML = ofc.obfuscate(paragraph.innerHTML);
+    }
 }
 const ofc = CodePointInsertionObfuscator.CombiningDiacriticalMarks();
 window.onload = obfuscateDescription;

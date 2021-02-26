@@ -1,20 +1,53 @@
 <!DOCTYPE html>
 <html>
     <header>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href='http://fonts.googleapis.com/css?family=Archivo+Narrow&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
         <style>
             body {
                 font-family: 'Archivo Narrow', sans-serif;
+                text-align: center;
+                margin-top: 30vh;
+            }
+            button, input {
+                padding: 10px;
+                border: 1px solid gray;
+                outline: none;
+            }
+            button {
+                cursor: pointer;
+                margin: 20px 0;
+            }
+            button:hover span {
+                display: none;
+            }
+            button:hover:before {
+                content: "O̵̹͉bfus͓cate";
+            }
+            #obfuscation-input {
+                width: 300px;
+                box-sizing: border-box;
+            }
+            @media(max-width: 800px) {
+                body {
+                    padding: 0 15px;
+                }
+                #obfuscation-input {
+                    width: 100%;
+                }
             }
         </style>
     </header>
     <body>
-        <p id="description">
-            A useful tool to make your text less readable for everyone. Just input your text, obfuscate and it will look as sexy as this one!
-        </p>
+        <div class="description">
+            <p>A useful tool to make your text less readable for everyone.</p>
+            <p>Just input your text, obfuscate and it will look as sexy as this one!</p>
+        </div>
         <form onsubmit="event.preventDefault(); obfuscateInput();">
-            <input id="obfuscation-input" type="text">
-            <button type="submit">Obfuscate</button>
+            <input id="obfuscation-input" type="text" autocomplete="off" autofocus>
+            <button type="submit">
+                <span>Obfuscate</span>
+            </button>
         </form>
         <p id="obfuscation-output"></p>
         <script src="obfuscation.js"></script>
