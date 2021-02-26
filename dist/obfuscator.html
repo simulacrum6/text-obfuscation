@@ -12,8 +12,10 @@
         <p id="description">
             A useful tool to make your text less readable for everyone. Just input your text, obfuscate and it will look as sexy as this one!
         </p>
-        <input id="obfuscation-input" type="text">
-        <button onclick="obfuscateInput()">Obfuscate</button>
+        <form onsubmit="event.preventDefault(); obfuscateInput();">
+            <input id="obfuscation-input" type="text">
+            <button type="submit">Obfuscate</button>
+        </form>
         <p id="obfuscation-output"></p>
         <script src="obfuscation.js"></script>
     </body>
