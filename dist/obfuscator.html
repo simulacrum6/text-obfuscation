@@ -1,19 +1,54 @@
 <!DOCTYPE html>
 <html>
     <header>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href='http://fonts.googleapis.com/css?family=Archivo+Narrow&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
         <style>
             body {
                 font-family: 'Archivo Narrow', sans-serif;
+                text-align: center;
+                padding: 15px;
+            }
+            .description {
+                margin: 25vh 0 50px 0;
+            }
+            button, input {
+                padding: 10px;
+                border: 1px solid gray;
+                outline: none;
+            }
+            button {
+                cursor: pointer;
+                margin: 20px 0;
+            }
+            #obfuscation-input {
+                width: 100%;
+                box-sizing: border-box;
+            }
+            @media(min-width: 800px) {
+                #obfuscation-input {
+                    width: 300px;
+                }
+                button:hover span {
+                    display: none;
+                }
+                button:hover:before {
+                    content: "O̵̹͉bfus͓cate";
+                }
             }
         </style>
     </header>
     <body>
-        <p id="description">
-            A useful tool to make your text less readable for everyone. Just input your text, obfuscate and it will look as sexy as this one!
-        </p>
-        <input id="obfuscation-input" type="text">
-        <button onclick="obfuscateInput()">Obfuscate</button>
+        <div class="description">
+            <p>A useful tool to make your text less readable for everyone.</p>
+            <p>Just input your text, obfuscate and it will look as sexy as this one!</p>
+        </div>
+        <form onsubmit="event.preventDefault(); obfuscateInput();">
+            <input id="obfuscation-input" type="text" autocomplete="off" autofocus>
+            <button type="submit">
+                <span>Obfuscate</span>
+            </button>
+        </form>
         <p id="obfuscation-output"></p>
         <script src="obfuscation.js"></script>
     </body>
